@@ -1,5 +1,5 @@
-// src/components/CleanlinessBar.js
 import React from 'react';
+import PropTypes from 'prop-types';
 import { CleanlinessContainer, CleanlinessLevel } from '../styles';
 import styled from 'styled-components';
 
@@ -8,15 +8,14 @@ const StyledCleanlinessText = styled.div`
   color: #333;
 `;
 
-const CleanlinessBar = ({ cleanliness }) => {
-  // Add conditional styling based on cleanliness level
+const CleanlinessBar = ({ metricName, cleanliness }) => {
   const getCleanlinessColor = (cleanliness) => {
     if (cleanliness >= 70) {
-      return 'green'; // High cleanliness, green color
+      return 'green';
     } else if (cleanliness >= 30) {
-      return 'orange'; // Medium cleanliness, orange color
+      return 'orange';
     } else {
-      return 'red'; // Low cleanliness, red color
+      return 'red';
     }
   };
 
@@ -24,12 +23,17 @@ const CleanlinessBar = ({ cleanliness }) => {
 
   return (
     <CleanlinessContainer>
-      <StyledCleanlinessText>Cleanliness:</StyledCleanlinessText>
+      <StyledCleanlinessText>{metricName}:</StyledCleanlinessText>
       <CleanlinessLevel cleanliness={cleanliness} color={cleanlinessColor}>
         {cleanliness}%
       </CleanlinessLevel>
     </CleanlinessContainer>
   );
+};
+
+CleanlinessBar.propTypes = {
+  metricName: PropTypes.string.isRequired,
+  cleanliness: PropTypes.number.isRequired,
 };
 
 export default CleanlinessBar;
