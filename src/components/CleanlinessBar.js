@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
+// Import styled components from your styles.js file
 import { CleanlinessContainer, CleanlinessLevel } from '../styles';
 
 // Styled component for the cleanliness label
@@ -9,27 +11,28 @@ const StyledCleanlinessText = styled.div`
   color: var(--cleanliness-text-color); // Text color for the cleanliness label
 `;
 
-// Determine the cleanliness color based on the cleanliness value
-const getColorBasedOnCleanliness = (cleanliness) => {
-  if (cleanliness >= 70) {
-    return 'var(--cleanliness-green)';
-  } else if (cleanliness >= 30) {
-    return 'var(--cleanliness-orange)';
-  } else {
-    return 'var(--cleanliness-red)';
-  }
-};
+// Styled component for the CleanlinessBar
+const StyledCleanlinessBar = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+`;
 
 const CleanlinessBar = ({ metricName, cleanliness }) => {
-  const cleanlinessColor = getColorBasedOnCleanliness(cleanliness);
+  const cleanlinessColor =
+    cleanliness >= 70
+      ? 'var(--cleanliness-green)'
+      : cleanliness >= 30
+      ? 'var(--cleanliness-orange)'
+      : 'var(--cleanliness-red)';
 
   return (
-    <CleanlinessContainer>
+    <StyledCleanlinessBar>
       <StyledCleanlinessText>{metricName}:</StyledCleanlinessText>
       <CleanlinessLevel cleanliness={cleanliness} color={cleanlinessColor}>
         {cleanliness}%
       </CleanlinessLevel>
-    </CleanlinessContainer>
+    </StyledCleanlinessBar>
   );
 };
 
