@@ -1,25 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CleanlinessContainer, CleanlinessLevel } from '../styles';
 import styled from 'styled-components';
+import { CleanlinessContainer, CleanlinessLevel } from '../styles';
 
+// Styled component for the cleanliness label
 const StyledCleanlinessText = styled.div`
   font-weight: bold;
-  color: #333;
+  color: var(--cleanliness-text-color); // Text color for the cleanliness label
 `;
 
-const CleanlinessBar = ({ metricName, cleanliness }) => {
-  const getCleanlinessColor = (cleanliness) => {
-    if (cleanliness >= 70) {
-      return 'green';
-    } else if (cleanliness >= 30) {
-      return 'orange';
-    } else {
-      return 'red';
-    }
-  };
+// Determine the cleanliness color based on the cleanliness value
+const getColorBasedOnCleanliness = (cleanliness) => {
+  if (cleanliness >= 70) {
+    return 'var(--cleanliness-green)';
+  } else if (cleanliness >= 30) {
+    return 'var(--cleanliness-orange)';
+  } else {
+    return 'var(--cleanliness-red)';
+  }
+};
 
-  const cleanlinessColor = getCleanlinessColor(cleanliness);
+const CleanlinessBar = ({ metricName, cleanliness }) => {
+  const cleanlinessColor = getColorBasedOnCleanliness(cleanliness);
 
   return (
     <CleanlinessContainer>
@@ -31,9 +33,16 @@ const CleanlinessBar = ({ metricName, cleanliness }) => {
   );
 };
 
+// Default props for metricName and cleanliness
+CleanlinessBar.defaultProps = {
+  metricName: 'Cleanliness',
+  cleanliness: 0,
+};
+
+// PropTypes for metricName and cleanliness
 CleanlinessBar.propTypes = {
-  metricName: PropTypes.string.isRequired,
-  cleanliness: PropTypes.number.isRequired,
+  metricName: PropTypes.string,
+  cleanliness: PropTypes.number,
 };
 
 export default CleanlinessBar;

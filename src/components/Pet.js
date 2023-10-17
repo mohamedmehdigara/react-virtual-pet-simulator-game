@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
-import { PetContainer, PetImage, PetButton, InfoContainer } from '../styles'; // Import InfoContainer
+import {
+  PetContainer,
+  PetImage,
+  PetButton,
+  InfoContainer,
+  CleanlinessContainer,
+  CleanlinessLevel,
+  EnergyContainer, // Add EnergyContainer import
+  EnergyLevel, // Add EnergyLevel import
+} from '../styles';
 import PlayButton from './PlayButton';
 import CleanlinessBar from './CleanlinessBar';
+import EnergyBar from './EnergyBar'; // Add EnergyBar import
 import Timer from './Timer';
 import PetName from './PetName';
-import HealthBar from './HealthBar'; // Import the HealthBar component
-import MoodIndicator from './MoodIndicator'; // Import the MoodIndicator component
+import HealthBar from './HealthBar';
+import MoodIndicator from './MoodIndicator';
 
 const Pet = () => {
   const [name, setName] = useState('Your Pet');
@@ -40,6 +50,7 @@ const Pet = () => {
       <PetImage happiness={happiness} />
       <InfoContainer>
         <CleanlinessBar cleanliness={cleanliness} />
+        <EnergyBar metricName="Energy" energy={energy} /> {/* Use EnergyBar component */}
         <Timer decreaseHappiness={decreaseHappiness} decreaseEnergy={decreaseEnergy} />
         <HealthBar health={health} />
         <MoodIndicator mood={mood} />
