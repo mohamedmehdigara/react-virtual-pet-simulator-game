@@ -7,24 +7,22 @@ import {
   CleanlinessLevel,
   EnergyContainer,
   EnergyLevel,
-} from '../styles'; // Make sure to import the necessary components from your styles file
+} from '../styles';
 import PlayButton from './PlayButton';
 import CleanlinessBar from './CleanlinessBar';
-import EnergyBar from './EnergyBar'; // Make sure to import the EnergyBar component
+import EnergyBar from './EnergyBar';
 import Timer from './Timer';
 import PetName from './PetName';
 import HealthBar from './HealthBar';
 import MoodIndicator from './MoodIndicator';
 
 const CatImage = () => {
-  const cat = `
-  /\\_/\\
- ( o.o )
-  > ^ <`;
-
   return (
     <pre>
-      <code>{cat}</code>
+      {`
+      /\\_/\\
+     ( o.o )
+      > ^ <`}
     </pre>
   );
 };
@@ -62,7 +60,7 @@ const Pet = () => {
       <CatImage /> {/* Use the CatImage component to display the cat image */}
       <InfoContainer>
         <CleanlinessBar cleanliness={cleanliness} />
-        <EnergyBar metricName="Energy" energy={energy} /> {/* Use EnergyBar component */}
+        <EnergyBar metricName="Energy" energy={energy} />
         <Timer decreaseHappiness={decreaseHappiness} decreaseEnergy={decreaseEnergy} />
         <HealthBar health={health} />
         <MoodIndicator mood={mood} />
