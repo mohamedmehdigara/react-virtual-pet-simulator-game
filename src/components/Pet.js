@@ -3,11 +3,7 @@ import {
   PetContainer,
   PetButton,
   InfoContainer,
-  CleanlinessContainer,
-  CleanlinessLevel,
-  EnergyContainer,
-  EnergyLevel,
-} from '../styles';
+} from '../styles'; // Import other necessary components from your styles.js file
 import PlayButton from './PlayButton';
 import CleanlinessBar from './CleanlinessBar';
 import EnergyBar from './EnergyBar';
@@ -15,17 +11,7 @@ import Timer from './Timer';
 import PetName from './PetName';
 import HealthBar from './HealthBar';
 import MoodIndicator from './MoodIndicator';
-
-const CatImage = () => {
-  return (
-    <pre>
-      {`
-      /\\_/\\
-     ( o.o )
-      > ^ <`}
-    </pre>
-  );
-};
+import CatImage from './CatImage';
 
 const Pet = () => {
   const [name, setName] = useState('Your Pet');
@@ -70,7 +56,7 @@ const Pet = () => {
         <PlayButton playWithPet={playWithPet} />
       </div>
     </PetContainer>
-  );
+    );
 };
 
 export default Pet;

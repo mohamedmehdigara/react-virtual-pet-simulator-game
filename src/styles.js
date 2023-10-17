@@ -12,7 +12,7 @@ export const PetContainer = styled.div`
 `;
 
 // Image of the pet
-export const PetImage = styled.img`
+export const CatImage = styled.img`
   max-width: 100%;
   border-radius: 50%;
   transition: transform 0.3s ease-in-out;
@@ -100,7 +100,7 @@ export const MoodText = styled.div`
 
 export default {
   PetContainer,
-  PetImage,
+  CatImage,
   PetButton,
   CleanlinessContainer,
   CleanlinessLevel,
