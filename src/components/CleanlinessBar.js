@@ -2,23 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-// Import styled components from your styles.js file
-import { CleanlinessContainer, CleanlinessLevel } from '../styles';
+// Import only the necessary styled component from your styles.js file
+import { CleanlinessContainer } from '../styles';
 
-// Styled component for the cleanliness label
+// Styled component for the CleanlinessBar, directly extending CleanlinessContainer
+const StyledCleanlinessBar = styled(CleanlinessContainer)`
+  /* You can adjust any additional styling specific to CleanlinessBar here */
+  /* For example, you can add margin, padding, or other CSS properties */
+`;
+
+// Styled component for the cleanliness label (no need for a separate styled component)
 const StyledCleanlinessText = styled.div`
   font-weight: bold;
   color: var(--cleanliness-text-color); // Text color for the cleanliness label
 `;
 
-// Styled component for the CleanlinessBar
-const StyledCleanlinessBar = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
-`;
-
 const CleanlinessBar = ({ metricName, cleanliness }) => {
+  // Determine the cleanliness color based on the cleanliness value
   const cleanlinessColor =
     cleanliness >= 70
       ? 'var(--cleanliness-green)'
@@ -29,9 +29,9 @@ const CleanlinessBar = ({ metricName, cleanliness }) => {
   return (
     <StyledCleanlinessBar>
       <StyledCleanlinessText>{metricName}:</StyledCleanlinessText>
-      <CleanlinessLevel cleanliness={cleanliness} color={cleanlinessColor}>
+      <CleanlinessContainer cleanliness={cleanliness} color={cleanlinessColor}>
         {cleanliness}%
-      </CleanlinessLevel>
+      </CleanlinessContainer>
     </StyledCleanlinessBar>
   );
 };
