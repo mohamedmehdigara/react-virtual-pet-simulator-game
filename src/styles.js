@@ -63,7 +63,6 @@ export const EnergyLevel = styled.div`
 `;
 
 // Container for additional information
-// In styles.js, make sure InfoContainer is correctly defined and exported
 export const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
