@@ -29,6 +29,7 @@ const CleanlinessBar = ({ metricName, cleanliness }) => {
   return (
     <StyledCleanlinessBar>
       <StyledCleanlinessText>{metricName}:</StyledCleanlinessText>
+      {/* Updated the CleanlinessContainer to use the determined cleanlinessColor */}
       <CleanlinessContainer cleanliness={cleanliness} color={cleanlinessColor}>
         {cleanliness}%
       </CleanlinessContainer>
