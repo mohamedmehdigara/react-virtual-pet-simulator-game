@@ -98,6 +98,22 @@ export const MoodText = styled.div`
   margin-left: 10px;
 `;
 
+export const SleepinessContainer = styled.div`
+  width: 100%;
+  height: 20px;
+  border-radius: 5px;
+  background-color: var(--sleepiness-background-color); // Adjust the color as needed
+  margin: 8px 0;
+  position: relative;
+`;
+
+export const SleepinessLevel = styled.div`
+  height: 100%;
+  border-radius: 5px;
+  width: ${({ sleepiness }) => `${sleepiness}%`};
+  background-color: var(--sleepiness-bar-color); // Adjust the color as needed
+`;
+
 export default {
   PetContainer,
   CatImage,
@@ -111,4 +127,6 @@ export default {
   HealthLevel,
   MoodIndicatorContainer,
   MoodText,
+  SleepinessContainer,
+  SleepinessLevel
 };

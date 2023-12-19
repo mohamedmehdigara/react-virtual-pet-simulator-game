@@ -12,6 +12,7 @@ import PetName from './PetName';
 import HealthBar from './HealthBar';
 import MoodIndicator from './MoodIndicator';
 import CatImage from './CatImage';
+import SleepinessBar from './SleepinessBar';
 
 const Pet = () => {
   const [name, setName] = useState('Your Pet');
@@ -39,6 +40,9 @@ const Pet = () => {
     setEnergy(energy - value);
   };
 
+  const [sleepiness, setSleepiness] = useState(0); // Add sleepiness state
+
+
   return (
     <PetContainer>
       <h1>{name}</h1>
@@ -47,6 +51,8 @@ const Pet = () => {
       <InfoContainer>
         <CleanlinessBar cleanliness={cleanliness} />
         <EnergyBar metricName="Energy" energy={energy} />
+        <SleepinessBar metricName="Sleepiness" sleepiness={sleepiness} /> {/* Add SleepinessBar */}
+
         <Timer decreaseHappiness={decreaseHappiness} decreaseEnergy={decreaseEnergy} />
         <HealthBar health={health} />
         <MoodIndicator mood={mood} />
