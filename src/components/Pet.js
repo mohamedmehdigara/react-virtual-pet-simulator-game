@@ -23,6 +23,8 @@ const Pet = () => {
   const [cleanliness, setCleanliness] = useState(100);
   const [health, setHealth] = useState(100);
   const [mood, setMood] = useState('Happy');
+  const [sleepiness, setSleepiness] = useState(0); // Add sleepiness state
+  const [hunger, setHunger] = useState(0); // Add sleepiness state
 
   const feedPet = () => {
     setHappiness(happiness + 10);
@@ -42,9 +44,7 @@ const Pet = () => {
     setEnergy(energy - value);
   };
 
-  const [sleepiness, setSleepiness] = useState(0); // Add sleepiness state
-  const [hunger, setHunger] = useState(0); // Add sleepiness state
-
+ 
 
   return (
     <PetContainer>
@@ -54,9 +54,14 @@ const Pet = () => {
       <InfoContainer>
         <CleanlinessBar cleanliness={cleanliness} />
         <EnergyBar metricName="Energy" energy={energy} />
-        <SleepinessBar metricName="Sleepiness" sleepiness={sleepiness} /> {/* Add SleepinessBar */}
-        <HungerBar metricName="Hunger" hunger={hunger} /> {/* Add this line for HungerBar */}
+        
+          <SleepinessBar sleepiness={sleepiness} />
+        
 
+        {/* Display the HungerBar with its label and value */}
+        
+          <HungerBar hunger={hunger} />
+        
         <Timer decreaseHappiness={decreaseHappiness} decreaseEnergy={decreaseEnergy} />
         <HealthBar health={health} />
         <MoodIndicator mood={mood} />
