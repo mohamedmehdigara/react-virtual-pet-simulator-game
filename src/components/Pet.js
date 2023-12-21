@@ -19,6 +19,7 @@ import SocialMeter from './SocialMeter';
 import PetShop from './PetShop';
 import Money from './Money'; // Import the Money component
 import Inventory from './Inventory';
+import Achievements from './Achievements';
 
 const Pet = () => {
   const [name, setName] = useState('Your Pet');
@@ -32,6 +33,8 @@ const Pet = () => {
   const [socialLevel, setSocialLevel] = useState(0);
   const [money, setMoney] = useState(50);
   const [inventory, setInventory] = useState([]); // State for inventory items
+  const [achievedAchievements, setAchievedAchievements] = useState([]);
+
 
 
   const feedPet = () => {
@@ -62,6 +65,29 @@ const Pet = () => {
     console.log(`Bought ${item.name} for $${item.price}`);
   };
 
+
+  const checkAchievements = () => {
+    if (!Array.isArray(achievedAchievements)) {
+      setAchievedAchievements([]); // Initialize it as an empty array if it's not an array
+      return;
+    }
+  
+    // Example: Unlock achievement for feeding the pet for the first time
+    if (inventory.some((item) => item.name === 'Food') && !achievedAchievements.includes(1)) {
+      setAchievedAchievements((prevAchievements) => [...prevAchievements, 1]);
+    }
+  
+    // Add more achievement checks based on your game's criteria
+  };
+  
+
+  // Call the checkAchievements function whenever there is a relevant action
+  // For example, after feeding or playing with the pet
+  // You can customize this based on your game's logic
+  React.useEffect(() => {
+    checkAchievements();
+  }, [inventory, achievedAchievements]);
+
   return (
     <PetContainer>
       <h1>{name}</h1>
@@ -76,6 +102,7 @@ const Pet = () => {
         <Money money={money} /> {/* Add the Money component */}
         <PetShop onBuy={handleBuy} money={money} />
         <Inventory items={inventory} /> {/* Add the Inventory component */}
+        <Achievements achievedAchievements={setAchievedAchievements} /> {/* Add the Achievements component */}
 
         <Timer decreaseHappiness={decreaseHappiness} decreaseEnergy={decreaseEnergy} />
         <HealthBar health={health} />
