@@ -18,6 +18,7 @@ import HungerBar from './HungerBar';
 import SocialMeter from './SocialMeter';
 import PetShop from './PetShop';
 import Money from './Money'; // Import the Money component
+import Inventory from './Inventory';
 
 const Pet = () => {
   const [name, setName] = useState('Your Pet');
@@ -30,6 +31,8 @@ const Pet = () => {
   const [hunger, setHunger] = useState(0);
   const [socialLevel, setSocialLevel] = useState(0);
   const [money, setMoney] = useState(50);
+  const [inventory, setInventory] = useState([]); // State for inventory items
+
 
   const feedPet = () => {
     setHappiness(happiness + 10);
@@ -54,6 +57,8 @@ const Pet = () => {
     // Implement logic to handle buying items
     // Deduct money, update pet state, etc.
     setMoney((prevMoney) => prevMoney - item.price);
+    setInventory((prevInventory) => [...prevInventory, item]);
+
     console.log(`Bought ${item.name} for $${item.price}`);
   };
 
@@ -70,6 +75,8 @@ const Pet = () => {
         <SocialMeter socialLevel={socialLevel} />
         <Money money={money} /> {/* Add the Money component */}
         <PetShop onBuy={handleBuy} money={money} />
+        <Inventory items={inventory} /> {/* Add the Inventory component */}
+
         <Timer decreaseHappiness={decreaseHappiness} decreaseEnergy={decreaseEnergy} />
         <HealthBar health={health} />
         <MoodIndicator mood={mood} />
