@@ -1,3 +1,4 @@
+// Pet.js
 import React, { useState } from 'react';
 import {
   PetContainer,
@@ -13,9 +14,10 @@ import HealthBar from './HealthBar';
 import MoodIndicator from './MoodIndicator';
 import CatImage from './CatImage';
 import SleepinessBar from './SleepinessBar';
-import HungerBar from './HungerBar'; // Add this line to import the HungerBar component
+import HungerBar from './HungerBar';
 import SocialMeter from './SocialMeter';
 import PetShop from './PetShop';
+import Money from './Money'; // Import the Money component
 
 const Pet = () => {
   const [name, setName] = useState('Your Pet');
@@ -24,10 +26,10 @@ const Pet = () => {
   const [cleanliness, setCleanliness] = useState(100);
   const [health, setHealth] = useState(100);
   const [mood, setMood] = useState('Happy');
-  const [sleepiness, setSleepiness] = useState(0); // Add sleepiness state
-  const [hunger, setHunger] = useState(0); // Add sleepiness state
+  const [sleepiness, setSleepiness] = useState(0);
+  const [hunger, setHunger] = useState(0);
   const [socialLevel, setSocialLevel] = useState(0);
-  const [money, setMoney] = useState(50); // Example initial money value
+  const [money, setMoney] = useState(50);
 
   const feedPet = () => {
     setHappiness(happiness + 10);
@@ -59,14 +61,15 @@ const Pet = () => {
     <PetContainer>
       <h1>{name}</h1>
       <PetName setName={setName} />
-      <CatImage /> {/* Use the CatImage component to display the cat image */}
+      <CatImage />
       <InfoContainer>
         <CleanlinessBar cleanliness={cleanliness} />
         <EnergyBar metricName="Energy" energy={energy} />
         <SleepinessBar sleepiness={sleepiness} />
         <HungerBar hunger={hunger} />
         <SocialMeter socialLevel={socialLevel} />
-        <PetShop onBuy={handleBuy} />
+        <Money money={money} /> {/* Add the Money component */}
+        <PetShop onBuy={handleBuy} money={money} />
         <Timer decreaseHappiness={decreaseHappiness} decreaseEnergy={decreaseEnergy} />
         <HealthBar health={health} />
         <MoodIndicator mood={mood} />

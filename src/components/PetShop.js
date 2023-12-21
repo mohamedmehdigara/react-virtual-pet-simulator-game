@@ -1,17 +1,24 @@
 // PetShop.js
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
+// Styled components for the shop container and individual shop items
 const ShopContainer = styled.div`
   /* Add any styling for the shop container */
+  border: 2px solid #3498db;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 20px;
 `;
 
 const ShopItem = styled.div`
   /* Add any styling for individual shop items */
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 10px;
 `;
 
-const PetShop = ({ onBuy }) => {
+const PetShop = ({ onBuy, money }) => {
   // Define your shop items and their prices
   const shopItems = [
     { id: 1, name: 'Toy', price: 10 },
@@ -19,10 +26,16 @@ const PetShop = ({ onBuy }) => {
     { id: 3, name: 'Accessory', price: 15 },
   ];
 
+  // Handler for buying items
   const handleBuy = (item) => {
-    // Implement your logic for buying items
-    // You can deduct money or perform other actions here
-    onBuy(item);
+    // Check if the user has enough money to buy the item
+    if (money >= item.price) {
+      // Call the onBuy function to handle the purchase
+      onBuy(item);
+    } else {
+      // Provide feedback to the user if they don't have enough money
+      console.log(`Not enough money to buy ${item.name}`);
+    }
   };
 
   return (
