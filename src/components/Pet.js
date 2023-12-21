@@ -29,10 +29,10 @@ const Pet = () => {
   const [socialLevel, setSocialLevel] = useState(0);
   const [money, setMoney] = useState(50); // Example initial money value
 
-
   const feedPet = () => {
     setHappiness(happiness + 10);
     setEnergy(energy + 10);
+    setHunger(hunger - 10);
   };
 
   const playWithPet = () => {
@@ -63,17 +63,10 @@ const Pet = () => {
       <InfoContainer>
         <CleanlinessBar cleanliness={cleanliness} />
         <EnergyBar metricName="Energy" energy={energy} />
-        
-          <SleepinessBar sleepiness={sleepiness} />
-        
-
-        {/* Display the HungerBar with its label and value */}
-        
-          <HungerBar hunger={hunger} />
-          <SocialMeter socialLevel={socialLevel} />
-          <PetShop onBuy={handleBuy} />
-
-        
+        <SleepinessBar sleepiness={sleepiness} />
+        <HungerBar hunger={hunger} />
+        <SocialMeter socialLevel={socialLevel} />
+        <PetShop onBuy={handleBuy} />
         <Timer decreaseHappiness={decreaseHappiness} decreaseEnergy={decreaseEnergy} />
         <HealthBar health={health} />
         <MoodIndicator mood={mood} />
@@ -83,7 +76,7 @@ const Pet = () => {
         <PlayButton playWithPet={playWithPet} />
       </div>
     </PetContainer>
-    );
+  );
 };
 
 export default Pet;

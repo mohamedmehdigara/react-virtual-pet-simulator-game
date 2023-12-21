@@ -1,14 +1,15 @@
+// CleanlinessBar.js
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-// Import only the necessary styled component from your styles.js file
+// Import only the necessary styled components from your styles.js file
 import { CleanlinessContainer } from '../styles';
 
 // Styled component for the CleanlinessBar, directly extending CleanlinessContainer
-const StyledCleanlinessBar = styled(CleanlinessContainer)`
-  /* You can adjust any additional styling specific to CleanlinessBar here */
-  /* For example, you can add margin, padding, or other CSS properties */
+const StyledCleanlinessBar = styled.div`
+  /* Add any additional styling for the overall CleanlinessBar container here */
+  /* For example, you can set the display property or add a border */
 `;
 
 // Styled component for the cleanliness label (no need for a separate styled component)

@@ -141,6 +141,31 @@ export const SocialMeterLevel = styled.div`
   /* You can add more styling properties based on your design requirements */
 `;
 
+// Container for bars (cleanliness, energy, health, sleepiness, hunger, social meter)
+export const BarContainer = styled.div`
+  width: 100%;
+  height: 20px;
+  border-radius: 5px;
+  margin: 8px 0;
+  position: relative;
+`;
+
+// Level of the bar (cleanliness, energy, health, sleepiness, hunger, social meter)
+export const BarLevel = styled.div`
+  height: 100%;
+  border-radius: 5px;
+  width: ${({ value }) => `${value}%`};
+  background-color: ${({ color }) => color};
+`;
+
+// Level text (cleanliness, energy, health, mood)
+export const LevelText = styled.div`
+  font-weight: bold;
+  color: ${({ color }) => color};
+  margin-left: 10px;
+`;
+
+
 export default {
   PetContainer,
   CatImage,
@@ -159,5 +184,8 @@ export default {
   HungerContainer,
   HungerLevel,
   SocialMeterContainer,
-  SocialMeterLevel
+  SocialMeterLevel,
+  BarContainer,
+  BarLevel,
+  LevelText
 };
