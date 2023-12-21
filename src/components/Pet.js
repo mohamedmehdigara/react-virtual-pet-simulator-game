@@ -14,7 +14,8 @@ import MoodIndicator from './MoodIndicator';
 import CatImage from './CatImage';
 import SleepinessBar from './SleepinessBar';
 import HungerBar from './HungerBar'; // Add this line to import the HungerBar component
-
+import SocialMeter from './SocialMeter';
+import PetShop from './PetShop';
 
 const Pet = () => {
   const [name, setName] = useState('Your Pet');
@@ -25,6 +26,9 @@ const Pet = () => {
   const [mood, setMood] = useState('Happy');
   const [sleepiness, setSleepiness] = useState(0); // Add sleepiness state
   const [hunger, setHunger] = useState(0); // Add sleepiness state
+  const [socialLevel, setSocialLevel] = useState(0);
+  const [money, setMoney] = useState(50); // Example initial money value
+
 
   const feedPet = () => {
     setHappiness(happiness + 10);
@@ -44,7 +48,12 @@ const Pet = () => {
     setEnergy(energy - value);
   };
 
- 
+  const handleBuy = (item) => {
+    // Implement logic to handle buying items
+    // Deduct money, update pet state, etc.
+    setMoney((prevMoney) => prevMoney - item.price);
+    console.log(`Bought ${item.name} for $${item.price}`);
+  };
 
   return (
     <PetContainer>
@@ -61,6 +70,9 @@ const Pet = () => {
         {/* Display the HungerBar with its label and value */}
         
           <HungerBar hunger={hunger} />
+          <SocialMeter socialLevel={socialLevel} />
+          <PetShop onBuy={handleBuy} />
+
         
         <Timer decreaseHappiness={decreaseHappiness} decreaseEnergy={decreaseEnergy} />
         <HealthBar health={health} />

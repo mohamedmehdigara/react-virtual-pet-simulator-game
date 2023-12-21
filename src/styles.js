@@ -130,6 +130,17 @@ export const HungerLevel = styled.div`
   background-color: ${({ color }) => color};
 `;
 
+export const SocialMeterContainer = styled.div`
+  /* Add any styling for the Social Meter container */
+`;
+
+// Level display for the Social Meter
+export const SocialMeterLevel = styled.div`
+  /* Add any styling for the Social Meter level */
+  font-size: 18px; // Adjust the font size as needed
+  /* You can add more styling properties based on your design requirements */
+`;
+
 export default {
   PetContainer,
   CatImage,
@@ -146,5 +157,7 @@ export default {
   SleepinessContainer,
   SleepinessLevel,
   HungerContainer,
-  HungerLevel
+  HungerLevel,
+  SocialMeterContainer,
+  SocialMeterLevel
 };
