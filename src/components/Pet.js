@@ -20,6 +20,7 @@ import PetShop from './PetShop';
 import Money from './Money'; // Import the Money component
 import Inventory from './Inventory';
 import Achievements from './Achievements';
+import Weather from './Weather';
 
 const Pet = () => {
   const [name, setName] = useState('Your Pet');
@@ -34,6 +35,7 @@ const Pet = () => {
   const [money, setMoney] = useState(50);
   const [inventory, setInventory] = useState([]); // State for inventory items
   const [achievedAchievements, setAchievedAchievements] = useState([]);
+  const [currentWeather, setCurrentWeather] = useState('sunny'); // Example initial weather
 
 
 
@@ -88,6 +90,11 @@ const Pet = () => {
     checkAchievements();
   }, [inventory, achievedAchievements]);
 
+   const handleWeatherChange = (newMood) => {
+    // Adjust pet's mood based on weather
+    setMood(newMood);
+  };
+
   return (
     <PetContainer>
       <h1>{name}</h1>
@@ -106,6 +113,8 @@ const Pet = () => {
 
         <Timer decreaseHappiness={decreaseHappiness} decreaseEnergy={decreaseEnergy} />
         <HealthBar health={health} />
+                <Weather currentWeather={currentWeather} onWeatherChange={handleWeatherChange} />
+
         <MoodIndicator mood={mood} />
       </InfoContainer>
       <div>
