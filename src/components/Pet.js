@@ -21,6 +21,7 @@ import Money from './Money'; // Import the Money component
 import Inventory from './Inventory';
 import Achievements from './Achievements';
 import Weather from './Weather';
+import Training from './Training';
 
 const Pet = () => {
   const [name, setName] = useState('Your Pet');
@@ -95,6 +96,14 @@ const Pet = () => {
     setMood(newMood);
   };
 
+  const handleTrainingComplete = () => {
+    // You can add logic for what happens when training is complete
+    // For example, increase a skill or attribute
+    console.log('Training complete! Your pet has improved.');
+    setHappiness(happiness + 5);
+    setEnergy(energy + 5);
+  };
+
   return (
     <PetContainer>
       <h1>{name}</h1>
@@ -116,6 +125,8 @@ const Pet = () => {
                 <Weather currentWeather={currentWeather} onWeatherChange={handleWeatherChange} />
 
         <MoodIndicator mood={mood} />
+        <Training onTrainingComplete={handleTrainingComplete} />
+
       </InfoContainer>
       <div>
         <PetButton onClick={feedPet}>Feed</PetButton>
