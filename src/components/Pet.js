@@ -22,6 +22,8 @@ import Inventory from './Inventory';
 import Achievements from './Achievements';
 import Weather from './Weather';
 import Training from './Training';
+import VeterinaryCare from './VeterinaryCare'; // Add this line to import VeterinaryCare
+
 
 const Pet = () => {
   const [name, setName] = useState('Your Pet');
@@ -104,6 +106,14 @@ const Pet = () => {
     setEnergy(energy + 5);
   };
 
+  const handleVeterinaryCare = () => {
+    console.log('Taking pet to the vet.');
+    // Simulate a pet getting sick
+    setHealth(70);
+    // Set pet to sick state
+    setAchievedAchievements((prevAchievements) => [...prevAchievements, 'Sick Pet']);
+  };
+
   return (
     <PetContainer>
       <h1>{name}</h1>
@@ -126,6 +136,8 @@ const Pet = () => {
 
         <MoodIndicator mood={mood} />
         <Training onTrainingComplete={handleTrainingComplete} />
+        <VeterinaryCare onTreatment={handleVeterinaryCare} />
+
 
       </InfoContainer>
       <div>
