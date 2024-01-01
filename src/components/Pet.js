@@ -23,7 +23,7 @@ import Achievements from './Achievements';
 import Weather from './Weather';
 import Training from './Training';
 import VeterinaryCare from './VeterinaryCare'; // Add this line to import VeterinaryCare
-
+import PetLevel from './PetLevel';
 
 const Pet = () => {
   const [name, setName] = useState('Your Pet');
@@ -39,8 +39,19 @@ const Pet = () => {
   const [inventory, setInventory] = useState([]); // State for inventory items
   const [achievedAchievements, setAchievedAchievements] = useState([]);
   const [currentWeather, setCurrentWeather] = useState('sunny'); // Example initial weather
+  const [petLevel, setPetLevel] = useState(1); // Add petLevel state
 
-
+  const handleTaskComplete = (stat, value) => {
+    // Update pet stats based on completed task
+    if (stat === 'happiness') {
+      setHappiness((prevHappiness) => prevHappiness + value);
+    } else if (stat === 'energy') {
+      setEnergy((prevEnergy) => prevEnergy + value);
+    } else if (stat === 'cleanliness') {
+      setCleanliness((prevCleanliness) => prevCleanliness + value);
+    }
+    // Add more conditions for other stats as needed
+  };
 
   const feedPet = () => {
     setHappiness(happiness + 10);
@@ -137,6 +148,7 @@ const Pet = () => {
         <MoodIndicator mood={mood} />
         <Training onTrainingComplete={handleTrainingComplete} />
         <VeterinaryCare onTreatment={handleVeterinaryCare} />
+        <PetLevel level={petLevel} />
 
 
       </InfoContainer>
