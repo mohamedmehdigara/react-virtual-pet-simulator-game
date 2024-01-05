@@ -1,4 +1,3 @@
-// CleanlinessBar.js
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -18,36 +17,60 @@ const StyledCleanlinessText = styled.div`
   color: var(--cleanliness-text-color); // Text color for the cleanliness label
 `;
 
-const CleanlinessBar = ({ metricName, cleanliness }) => {
-  // Determine the cleanliness color based on the cleanliness value
+const CleanlinessBar = ({ metricName, cleanliness, thresholds }) => {
+  // Default color thresholds
+  const defaultThresholds = {
+    high: 70,
+    medium: 30,
+  };
+
+  const { high, medium } = { ...defaultThresholds, ...thresholds };
+
+  // Determine the cleanliness color based on the cleanliness value and thresholds
   const cleanlinessColor =
-    cleanliness >= 70
+    cleanliness >= high
       ? 'var(--cleanliness-green)'
-      : cleanliness >= 30
+      : cleanliness >= medium
       ? 'var(--cleanliness-orange)'
       : 'var(--cleanliness-red)';
 
   return (
     <StyledCleanlinessBar>
-      <StyledCleanlinessText>{metricName}:</StyledCleanlinessText>
-      {/* Updated the CleanlinessContainer to use the determined cleanlinessColor */}
-      <CleanlinessContainer cleanliness={cleanliness} color={cleanlinessColor}>
+      <StyledCleanlinessText role="heading" aria-level="2">
+        {metricName}:
+      </StyledCleanlinessText>
+      <CleanlinessContainer
+        cleanliness={cleanliness}
+        color={cleanlinessColor}
+        role="progressbar"
+        aria-valuenow={cleanliness}
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
         {cleanliness}%
       </CleanlinessContainer>
     </StyledCleanlinessBar>
   );
 };
 
-// Default props for metricName and cleanliness
+// Default props for metricName, cleanliness, and thresholds
 CleanlinessBar.defaultProps = {
   metricName: 'Cleanliness',
   cleanliness: 0,
+  thresholds: {
+    high: 70,
+    medium: 30,
+  },
 };
 
-// PropTypes for metricName and cleanliness
+// PropTypes for metricName, cleanliness, and thresholds
 CleanlinessBar.propTypes = {
   metricName: PropTypes.string,
   cleanliness: PropTypes.number,
+  thresholds: PropTypes.shape({
+    high: PropTypes.number,
+    medium: PropTypes.number,
+  }),
 };
 
 export default CleanlinessBar;
