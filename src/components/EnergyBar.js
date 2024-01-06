@@ -21,37 +21,57 @@ const EnergyLevel = styled.div`
   margin-left: 10px;
 `;
 
-const getColorBasedOnEnergy = (energy) => {
-  if (energy >= 70) {
+const getColorBasedOnEnergy = (energy, thresholds) => {
+  const { high, medium } = thresholds;
+
+  if (energy >= high) {
     return 'var(--energy-green)'; // High energy, green color
-  } else if (energy >= 30) {
+  } else if (energy >= medium) {
     return 'var(--energy-orange)'; // Medium energy, orange color
   } else {
     return 'var(--energy-red)'; // Low energy, red color
   }
 };
 
-const EnergyBar = ({ metricName, energy }) => {
-  const energyColor = getColorBasedOnEnergy(energy);
+const EnergyBar = ({ metricName, energy, thresholds }) => {
+  const energyColor = getColorBasedOnEnergy(energy, thresholds);
 
   return (
     <EnergyContainer>
-      <StyledEnergyText>{metricName}:</StyledEnergyText>
-      <EnergyLevel color={energyColor}>{energy}%</EnergyLevel>
+      <StyledEnergyText role="heading" aria-level="2">
+        {metricName}:
+      </StyledEnergyText>
+      <EnergyLevel
+        color={energyColor}
+        role="progressbar"
+        aria-valuenow={energy}
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        {energy}%
+      </EnergyLevel>
     </EnergyContainer>
   );
 };
 
-// Default props for metricName and energy
+// Default props for metricName, energy, and thresholds
 EnergyBar.defaultProps = {
   metricName: 'Energy',
   energy: 0,
+  thresholds: {
+    high: 70,
+    medium: 30,
+  },
 };
 
-// PropTypes for metricName and energy
+// PropTypes for metricName, energy, and thresholds
 EnergyBar.propTypes = {
   metricName: PropTypes.string,
   energy: PropTypes.number,
+  thresholds: PropTypes.shape({
+    high: PropTypes.number,
+    medium: PropTypes.number,
+  }),
 };
 
 export default EnergyBar;

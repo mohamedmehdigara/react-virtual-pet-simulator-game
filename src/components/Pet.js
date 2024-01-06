@@ -135,6 +135,8 @@ const Pet = () => {
         <EnergyBar metricName="Energy" energy={energy} />
         <SleepinessBar sleepiness={sleepiness} />
         <HungerBar hunger={hunger} />
+        <HealthBar health={health} />
+
         <SocialMeter socialLevel={socialLevel} />
         <Money money={money} /> {/* Add the Money component */}
         <PetShop onBuy={handleBuy} money={money} />
@@ -142,7 +144,6 @@ const Pet = () => {
         <Achievements achievedAchievements={setAchievedAchievements} /> {/* Add the Achievements component */}
 
         <Timer decreaseHappiness={decreaseHappiness} decreaseEnergy={decreaseEnergy} />
-        <HealthBar health={health} />
                 <Weather currentWeather={currentWeather} onWeatherChange={handleWeatherChange} />
 
         <MoodIndicator mood={mood} />
