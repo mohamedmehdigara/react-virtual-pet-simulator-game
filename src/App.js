@@ -1,273 +1,255 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import styled, { keyframes, css } from 'styled-components';
 
-// --- Advanced Simulation State (Zustand) ---
-const useStore = create((set, get) => ({
-  // Core Metrics
-  stats: { hunger: 100, energy: 100, happiness: 100, hygiene: 100, health: 100 },
-  economy: { coins: 100, xp: 0, level: 1 },
-  meta: { isAlive: true, isDaytime: true, status: 'System Initialized', age: 0 },
-  inventory: { treats: 2, medicine: 1 },
+// --- Advanced Simulation State Engine (Zustand + Persistence) ---
+const useStore = create(
+  persist(
+    (set, get) => ({
+      stats: { hunger: 100, energy: 100, happiness: 100, hygiene: 100, health: 100 },
+      economy: { coins: 60, xp: 0, level: 1 },
+      meta: { isAlive: true, isDaytime: true, status: 'Initializing System...', age: 0 },
+      inventory: { food: 5, medicine: 2 },
 
-  // Business Logic: Unified Action Handler
-  dispatch: (action) => set((state) => {
-    if (!state.meta.isAlive) return state;
-    
-    const { stats, economy, inventory } = state;
-    
-    switch (action) {
-      case 'FEED_TREAT':
-        if (inventory.treats <= 0) return { meta: { ...state.meta, status: 'No treats left!' } };
-        return {
-          stats: { ...stats, hunger: Math.min(stats.hunger + 30, 100), hygiene: Math.max(stats.hygiene - 5, 0) },
-          inventory: { ...inventory, treats: inventory.treats - 1 },
-          economy: { ...economy, xp: economy.xp + 20 },
-          meta: { ...state.meta, status: 'Delicious treat!' }
+      // Central Command Dispatcher
+      dispatch: (type, payload) => set((state) => {
+        if (!state.meta.isAlive && type !== 'REBOOT') return state;
+        const { stats, economy, inventory, meta } = state;
+
+        switch (type) {
+          case 'FEED':
+            if (inventory.food <= 0) return { meta: { ...meta, status: 'Out of food!' } };
+            return {
+              stats: { ...stats, hunger: Math.min(stats.hunger + 35, 100) },
+              inventory: { ...inventory, food: inventory.food - 1 },
+              economy: { ...economy, xp: economy.xp + 25 },
+              meta: { ...meta, status: 'Delicious! +25 XP' }
+            };
+          case 'MEDICATE':
+            if (inventory.medicine <= 0) return { meta: { ...meta, status: 'No medicine left!' } };
+            return {
+              stats: { ...stats, health: Math.min(stats.health + 45, 100) },
+              inventory: { ...inventory, medicine: inventory.medicine - 1 },
+              meta: { ...meta, status: 'Applying treatment...' }
+            };
+          case 'PURCHASE':
+            if (economy.coins < payload.cost) return { meta: { ...meta, status: 'Not enough coins!' } };
+            return {
+              economy: { ...economy, coins: economy.coins - payload.cost },
+              inventory: { ...inventory, [payload.item]: inventory[payload.item] + 1 },
+              meta: { ...meta, status: `Bought ${payload.item}` }
+            };
+          case 'CLEAN':
+            return {
+              stats: { ...stats, hygiene: 100 },
+              economy: { ...economy, xp: economy.xp + 15 },
+              meta: { ...meta, status: 'Sparkling clean!' }
+            };
+          case 'CYCLE_LIGHT':
+            return { meta: { ...meta, isDaytime: !meta.isDaytime } };
+          case 'PLAY':
+            if (stats.energy < 25) return { meta: { ...meta, status: 'Too tired to play...' } };
+            return {
+              stats: { ...stats, happiness: Math.min(stats.happiness + 30, 100), energy: stats.energy - 25 },
+              economy: { ...economy, xp: economy.xp + 65 },
+              meta: { ...meta, status: 'Pure Joy! +65 XP' }
+            };
+          case 'REBOOT':
+            return {
+              stats: { hunger: 100, energy: 100, happiness: 100, hygiene: 100, health: 100 },
+              economy: { coins: 60, xp: 0, level: 1 },
+              meta: { isAlive: true, isDaytime: true, status: 'New Life Detected', age: 0 },
+              inventory: { food: 5, medicine: 2 }
+            };
+          default: return state;
+        }
+      }),
+
+      // The Simulation "Heartbeat" (Tick Logic)
+      tick: () => set((state) => {
+        if (!state.meta.isAlive) return state;
+
+        const { hunger, energy, happiness, hygiene, health } = state.stats;
+        const { isDaytime, age } = state.meta;
+
+        // Scaling difficulty based on Level
+        const difficulty = 1 + (state.economy.level * 0.04);
+
+        const newStats = {
+          hunger: Math.max(0, hunger - (isDaytime ? 1.6 * difficulty : 0.6)),
+          energy: Math.max(0, Math.min(100, energy + (isDaytime ? -1.2 : 6.5))),
+          happiness: Math.max(0, happiness - 0.9),
+          hygiene: Math.max(0, hygiene - 0.7),
+          // Health logic: Passive decay if core needs are critical
+          health: Math.max(0, health + (hunger < 15 || hygiene < 15 || energy < 10 ? -2.8 : 0.2))
         };
-      case 'BUY_TREAT':
-        if (economy.coins < 15) return { meta: { ...state.meta, status: 'Insufficient funds!' } };
+
+        // Random Event System
+        let eventMsg = state.meta.status;
+        let income = isDaytime ? 0.45 : 0.15;
+        if (Math.random() > 0.985) {
+          income += 20;
+          eventMsg = "Lucky day! Found $20";
+        }
+
         return {
-          economy: { ...economy, coins: economy.coins - 15 },
-          inventory: { ...inventory, treats: inventory.treats + 1 },
-          meta: { ...state.meta, status: 'Purchased a treat' }
+          stats: newStats,
+          economy: { 
+            ...state.economy, 
+            level: Math.floor(state.economy.xp / 600) + 1, 
+            coins: state.economy.coins + income 
+          },
+          meta: { ...state.meta, age: age + 1, isAlive: newStats.health > 0, status: eventMsg }
         };
-      case 'CLEAN':
-        return {
-          stats: { ...stats, hygiene: 100, happiness: Math.min(stats.happiness + 10, 100) },
-          economy: { ...economy, xp: economy.xp + 10 },
-          meta: { ...state.meta, status: 'Scrub a dub dub!' }
-        };
-      case 'TOGGLE_SLEEP':
-        return {
-          meta: { ...state.meta, isDaytime: !state.meta.isDaytime, status: state.meta.isDaytime ? 'Zzz...' : 'Awake!' }
-        };
-      case 'PLAY':
-        return {
-          stats: { ...stats, happiness: Math.min(stats.happiness + 25, 100), energy: Math.max(stats.energy - 20, 0) },
-          economy: { ...economy, xp: economy.xp + 40 },
-          meta: { ...state.meta, status: 'Zoomies!' }
-        };
-      default: return state;
-    }
-  }),
+      })
+    }),
+    { name: 'virtual-pet-v5-omega' }
+  )
+);
 
-  // Advanced Game Loop: Simulation Physics
-  tick: () => set((state) => {
-    if (!state.meta.isAlive) return state;
-
-    const { hunger, energy, happiness, hygiene, health } = state.stats;
-    const { isDaytime } = state.meta;
-
-    // Simulation Physics: Weighted Decay
-    const hungerDecay = isDaytime ? 1.5 : 0.5;
-    const energyDelta = isDaytime ? -1.0 : 4.0;
-    const hygieneDecay = 0.8;
-    
-    // Health logic: If hunger or hygiene are zero, health drops rapidly
-    let healthDelta = 0.2; // Passive regen
-    if (hunger <= 10) healthDelta -= 2.5;
-    if (hygiene <= 10) healthDelta -= 1.5;
-    if (energy <= 5) healthDelta -= 1.0;
-
-    const nextStats = {
-      hunger: Math.max(0, Math.min(100, hunger - hungerDecay)),
-      energy: Math.max(0, Math.min(100, energy + energyDelta)),
-      happiness: Math.max(0, Math.min(100, happiness - 0.5)),
-      hygiene: Math.max(0, Math.min(100, hygiene - hygieneDecay)),
-      health: Math.max(0, Math.min(100, health + healthDelta)),
-    };
-
-    const isStillAlive = nextStats.health > 0;
-    const newLevel = Math.floor(state.economy.xp / 500) + 1;
-
-    return {
-      stats: nextStats,
-      meta: { 
-        ...state.meta, 
-        isAlive: isStillAlive, 
-        age: state.meta.age + 1,
-        status: isStillAlive ? state.meta.status : 'Critical Failure'
-      },
-      economy: { 
-        ...state.economy, 
-        level: newLevel,
-        coins: isStillAlive && isDaytime ? state.economy.coins + 0.2 : state.economy.coins 
-      }
-    };
-  }),
-
-  reset: () => set({
-    stats: { hunger: 100, energy: 100, happiness: 100, hygiene: 100, health: 100 },
-    economy: { coins: 100, xp: 0, level: 1 },
-    meta: { isAlive: true, isDaytime: true, status: 'Rebooting...', age: 0 },
-    inventory: { treats: 2, medicine: 1 }
-  })
-}));
-
-// --- Styles: The Matrix Simulation Aesthetic ---
-const World = styled.div`
+// --- Styled Components: The World Engine ---
+const AppFrame = styled.div`
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 2s ease-in-out;
-  background: ${props => props.$isDay ? '#f8f9fa' : '#1a1a2e'};
-  padding: 20px;
+  transition: all 1.8s ease-in-out;
+  background: ${props => props.$day ? '#f1f5f9' : '#020617'};
+  padding: 1rem;
 `;
 
-const SimulationFrame = styled.div`
+const SimulationCard = styled.div`
   width: 100%;
   max-width: 450px;
-  background: ${props => props.$isDay ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 30, 50, 0.95)'};
-  backdrop-filter: blur(20px);
-  border-radius: 40px;
-  padding: 30px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.12);
-  border: 2px solid ${props => props.$health < 30 ? '#ff4757' : 'transparent'};
-  color: ${props => props.$isDay ? '#2d3436' : '#ffffff'};
-  transition: all 0.5s;
-`;
-
-const PetContainer = styled.div`
-  height: 200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  background: ${props => props.$day ? 'rgba(255, 255, 255, 0.96)' : 'rgba(30, 41, 59, 0.98)'};
+  color: ${props => props.$day ? '#0f172a' : '#f8fafc'};
+  backdrop-filter: blur(15px);
+  padding: 2.5rem;
+  border-radius: 4rem;
+  box-shadow: 0 35px 60px -15px rgba(0,0,0,0.5);
+  border: 4px solid ${props => props.$crit ? '#ef4444' : 'transparent'};
+  filter: ${props => props.$crit ? 'contrast(1.1) brightness(0.95)' : 'none'};
+  transition: border 0.3s;
 `;
 
 const float = keyframes`
   0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-20px) scale(1.02); }
+  50% { transform: translateY(-30px) scale(1.08); }
 `;
 
-const Avatar = styled.div`
-  font-size: 100px;
-  animation: ${props => props.$active ? css`${float} 4s ease-in-out infinite` : 'none'};
-  filter: ${props => props.$health < 40 ? 'sepia(0.8) grayscale(0.5)' : 'none'};
-  opacity: ${props => props.$isDay ? 1 : 0.6};
+const PetVisual = styled.div`
+  font-size: 9rem;
+  text-align: center;
+  margin: 1.5rem 0;
+  animation: ${props => props.$active ? css`${float} 4.5s infinite ease-in-out` : 'none'};
+  filter: ${props => props.$ill ? 'grayscale(0.8) blur(1px)' : 'none'};
+  opacity: ${props => props.$day ? 1 : 0.45};
+  transition: all 0.6s ease;
 `;
 
-const StatGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-top: 25px;
-`;
-
-const BarWrapper = styled.div`
-  background: rgba(0,0,0,0.05);
-  height: 8px;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-top: 5px;
-`;
-
-const Bar = styled.div`
-  height: 100%;
-  width: ${props => props.$pct}%;
-  background: ${props => props.$color};
-  transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-`;
-
-const ControlPad = styled.div`
+const ControlGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 30px;
+  gap: 1rem;
+  margin-top: 1.5rem;
 `;
 
 const ActionBtn = styled.button`
-  background: ${props => props.$color || '#6c5ce7'};
-  color: white;
   border: none;
-  padding: 15px;
-  border-radius: 20px;
+  padding: 1.2rem;
+  border-radius: 1.5rem;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+  background: ${props => props.$color || '#4f46e5'};
+  color: white;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+  transition: transform 0.1s, box-shadow 0.1s;
   &:active { transform: translateY(2px); box-shadow: none; }
-  &:disabled { opacity: 0.3; cursor: not-allowed; }
+  &:disabled { opacity: 0.35; cursor: not-allowed; }
 `;
 
-// --- Main Application ---
+const StatRow = ({ label, val, color }) => (
+  <div style={{ marginBottom: '1rem' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', fontWeight: 900, opacity: 0.8 }}>
+      <span>{label}</span>
+      <span>{Math.round(val)}%</span>
+    </div>
+    <div style={{ background: 'rgba(0,0,0,0.1)', height: '10px', borderRadius: '5px', marginTop: '6px' }}>
+      <div style={{ 
+        background: color, 
+        width: `${val}%`, 
+        height: '100%', 
+        borderRadius: '5px', 
+        transition: 'width 1.5s cubic-bezier(0.2, 0.8, 0.2, 1)' 
+      }} />
+    </div>
+  </div>
+);
+
+// --- Main Component ---
 export default function App() {
-  const store = useStore();
+  const s = useStore();
 
   useEffect(() => {
-    const clock = setInterval(() => store.tick(), 1500);
-    return () => clearInterval(clock);
+    const heartbeat = setInterval(() => s.tick(), 3000);
+    return () => clearInterval(heartbeat);
   }, []);
 
-  const petEmoji = useMemo(() => {
-    if (!store.meta.isAlive) return '💀';
-    if (!store.meta.isDaytime) return '🐨';
-    if (store.stats.health < 40) return '🤕';
-    if (store.stats.hunger < 40) return '🍕';
-    if (store.stats.happiness < 40) return '😿';
-    return '🐲';
-  }, [store.meta, store.stats]);
+  const currentEmoji = useMemo(() => {
+    if (!s.meta.isAlive) return '🪦';
+    if (!s.meta.isDaytime) return '😴';
+    if (s.stats.health < 40) return '🤕';
+    if (s.economy.level > 12) return '🐲';
+    if (s.economy.level > 6) return '🐧';
+    if (s.economy.level > 2) return '🐤';
+    return '🐣';
+  }, [s.meta, s.stats, s.economy]);
+
+  const criticalState = s.stats.health < 35 || s.stats.happiness < 30;
 
   return (
-    <World $isDay={store.meta.isDaytime}>
-      <SimulationFrame $isDay={store.meta.isDaytime} $health={store.stats.health}>
-        
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 900, opacity: 0.7 }}>
-          <span>LVL {store.economy.level}</span>
-          <span>${Math.floor(store.economy.coins)}</span>
+    <AppFrame $day={s.meta.isDaytime}>
+      <SimulationCard $day={s.meta.isDaytime} $crit={criticalState}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 900, letterSpacing: '1px' }}>
+          <span>LV. {s.economy.level}</span>
+          <span style={{ color: '#fbbf24' }}>💰 {Math.floor(s.economy.coins)}</span>
         </div>
 
-        <PetContainer>
-          <Avatar $active={store.meta.isAlive} $health={store.stats.health} $isDay={store.meta.isDaytime}>
-            {petEmoji}
-          </Avatar>
-          <p style={{ fontWeight: 600, fontSize: '14px' }}>{store.meta.status}</p>
-        </PetContainer>
+        <PetVisual $active={s.meta.isAlive} $ill={s.stats.health < 40} $day={s.meta.isDaytime}>
+          {currentEmoji}
+        </PetVisual>
 
-        <StatGrid>
-          <StatComponent label="HP" val={store.stats.health} color="#ff4757" />
-          <StatComponent label="Hunger" val={store.stats.hunger} color="#ffa502" />
-          <StatComponent label="Energy" val={store.stats.energy} color="#2e86de" />
-          <StatComponent label="Hygiene" val={store.stats.hygiene} color="#2ed573" />
-        </StatGrid>
+        <p style={{ textAlign: 'center', fontWeight: 800, minHeight: '1.5rem', color: criticalState ? '#f87171' : 'inherit' }}>
+          {s.meta.status}
+        </p>
 
-        {store.meta.isAlive ? (
-          <ControlPad>
-            <ActionBtn $color="#ffa502" onClick={() => store.dispatch('FEED_TREAT')} disabled={store.inventory.treats === 0}>
-              Feed ({store.inventory.treats})
-            </ActionBtn>
-            <ActionBtn $color="#2e86de" onClick={() => store.dispatch('TOGGLE_SLEEP')}>
-              {store.meta.isDaytime ? 'Sleep' : 'Wake'}
-            </ActionBtn>
-            <ActionBtn $color="#ff9f43" onClick={() => store.dispatch('BUY_TREAT')}>
-              Buy Food ($15)
-            </ActionBtn>
-            <ActionBtn $color="#2ed573" onClick={() => store.dispatch('CLEAN')}>
-              Cleanse
-            </ActionBtn>
-            <ActionBtn $color="#e84393" style={{ gridColumn: 'span 2' }} onClick={() => store.dispatch('PLAY')}>
-              Interactive Play
-            </ActionBtn>
-          </ControlPad>
+        <section style={{ background: 'rgba(0,0,0,0.04)', padding: '1.5rem', borderRadius: '2.5rem' }}>
+          <StatRow label="VITALITY" val={s.stats.health} color="#ef4444" />
+          <StatRow label="HUNGER" val={s.stats.hunger} color="#f59e0b" />
+          <StatRow label="ENERGY" val={s.stats.energy} color="#3b82f6" />
+          <StatRow label="HYGIENE" val={s.stats.hygiene} color="#10b981" />
+        </section>
+
+        {s.meta.isAlive ? (
+          <ControlGrid>
+            <ActionBtn $color="#f59e0b" onClick={() => s.dispatch('FEED')}>Food ({s.inventory.food})</ActionBtn>
+            <ActionBtn $color="#3b82f6" onClick={() => s.dispatch('CYCLE_LIGHT')}>{s.meta.isDaytime ? 'Sleep' : 'Wake'}</ActionBtn>
+            <ActionBtn $color="#ec4899" onClick={() => s.dispatch('PLAY')}>Interactive Play</ActionBtn>
+            <ActionBtn $color="#10b981" onClick={() => s.dispatch('CLEAN')}>Bath Time</ActionBtn>
+            <ActionBtn $color="#ef4444" onClick={() => s.dispatch('MEDICATE')}>Medicine ({s.inventory.medicine})</ActionBtn>
+            <ActionBtn $color="#6366f1" onClick={() => s.dispatch('PURCHASE', { item: 'food', cost: 30 })}>Shop ($30)</ActionBtn>
+          </ControlGrid>
         ) : (
-          <ActionBtn $color="#2d3436" style={{ width: '100%', marginTop: '30px' }} onClick={store.reset}>
-            REINITIALIZE LIFE FORM
+          <ActionBtn $color="#1e293b" style={{ width: '100%', marginTop: '2rem', padding: '1.5rem' }} onClick={() => s.dispatch('REBOOT')}>
+            INITIATE RESURRECTION
           </ActionBtn>
         )}
 
-        <footer style={{ marginTop: '20px', fontSize: '10px', textAlign: 'center', opacity: 0.5 }}>
-          AGE: {Math.floor(store.meta.age / 10)} cycles | NEXT LVL: {500 - (store.economy.xp % 500)} XP
+        <footer style={{ marginTop: '2rem', fontSize: '0.65rem', textAlign: 'center', opacity: 0.5, fontWeight: 800 }}>
+          CYCLES ELAPSED: {s.meta.age} | NEXT EVOLUTION: {600 - (s.economy.xp % 600)} XP
         </footer>
-      </SimulationFrame>
-    </World>
+      </SimulationCard>
+    </AppFrame>
   );
 }
-
-const StatComponent = ({ label, val, color }) => (
-  <div>
-    <span style={{ fontSize: '11px', fontWeight: 800 }}>{label}</span>
-    <BarWrapper><Bar $pct={val} $color={color} /></BarWrapper>
-  </div>
-);
